@@ -1,0 +1,24 @@
+[Unit]
+Description=Open vSwitch Database Server
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker run \
+  --name openvswitch-db \
+  --rm \
+  --network host \
+  -v /mnt/data/data/ovs/etc/openvswitch:/etc/openvswitch \
+  -v /mnt/data/data/ovs/var/run/openvswitch:/var/run/openvswitch \
+  -v /lib/modules:/lib/modules:ro \
+  --cap-add=NET_ADMIN \
+  --cap-add=NET_BIND_SERVICE \
+  --cap-add=SYS_ADMIN \
+ patsys/openvswitch /usr/local/bin/start-db.sh
+ExecStop=/usr/bin/docker stop openvswitch-db
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
